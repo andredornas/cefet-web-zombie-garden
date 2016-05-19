@@ -45,8 +45,33 @@ router.get('/new/', function(req, res) {
 
 /* POST registra uma nova pessoa */
 // IMPLEMENTAR AQUI
+router.post('/', function(req, res){
+  db.query("INSERT INTO `zombies`.`person` (name) VALUES("+ db.escape(req.body.name) +")",
+    function(err, result){
+      if (err){
+        res.status(500).send('Erro ao criar pessoa');
+        return;
+      }
+      req.flash('peopleCountChange', '+1');
+      req.flash('success', 'Uma nova pessoa criada: ' + req.body.name);
+      res.redirect('/people');
+    })
+
+});
 
 /* DELETE uma pessoa */
 // IMPLEMENTAR AQUI
+router.delete('/:id', function(req, res){
+  db.query('DELETE FROM zombies.person WHERE id = ' + req.params.id,
+  function(err, result){
+    if (err) {
+      res.status(500).send('Erro ao deletar uma pessoa.');
+      return;
+    }
+    req.flash('peopleCountChange', '-1');
+    req.flash('success', 'Pessoa excluida');
+    res.redirect('/people');
+  });
+});
 
 module.exports = router;
